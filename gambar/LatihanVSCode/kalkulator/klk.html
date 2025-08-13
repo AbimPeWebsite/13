@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Sederhana</title>
+<link rel="stylesheet" href="klk.css">
+</head>
+<body>
+  <div class="calc">
+    <h2>Kalkulator</h2>
+    <input type="number" id="angka1" placeholder="Angka pertama">
+    <input type="number" id="angka2" placeholder="Angka kedua">
+    <select id="operator">
+      <option value="+">Tambah (+)</option>
+      <option value="-">Kurang (-)</option>
+      <option value="*">Kali (x)</option>
+      <option value="/">Bagi (÷)</option>
+    </select>
+    <button onclick="hitung()">Hitung</button>
+    <div class="result" id="hasil"></div>
+  </div>
+
+  <script src="klk.js"></script>
+</body>
+</html>

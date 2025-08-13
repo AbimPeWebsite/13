@@ -1,0 +1,170 @@
+:root {
+    --bg: #0b1220;
+    --card: #111a2e;
+    --accent: #34d399;
+    --text: #e8edf7;
+    --muted: #7b88a8;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    margin-bottom: 15px;
+}
+.tagline {
+    color: var(--muted);
+}
+
+/* SECTIONS */
+.section {
+    padding: 40px 20px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+h2 {
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+
+/* PROFIL LIST */
+.profil ul {
+    list-style: none;
+    padding: 0;
+}
+.profil li {
+    padding: 10px;
+    background: var(--card);
+    margin-bottom: 8px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+.profil li:hover {
+    background: rgba(52, 211, 153, 0.1);
+}
+
+/* GALLERY */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+.card {
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+.card-content {
+    padding: 15px;
+}
+.card-content h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+.card-content p {
+    color: var(--muted);
+    font-size: 0.9em;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: var(--card);
+    margin-top: 40px;
+    color: var(--muted);
+}
+
+h4 {
+    color: #34d399;
+}
+
+/* Style Komentar */
+.komentar-section {
+    margin-top: 50px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.komentar-section h2 {
+    margin-bottom: 15px;
+    color: var(--accent);
+}
+
+#commentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#commentForm input, 
+#commentForm textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+#commentForm button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#commentForm button:hover {
+    opacity: 0.9;
+}
+
+#commentList {
+    margin-top: 20px;
+}
+
+.comment-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-item strong {
+    color: var(--accent);
+}
+
+
+footer {
+  padding: 4rem 0;
+  background: var(--secondaryBackgroundColor);
+  text-align: center;
+}
+
+.footer-icons {
+  margin-bottom: 1rem;
+}

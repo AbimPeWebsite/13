@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalkulator & Tracker Bulking</title>
+  <style>
+    :root{
+      --bg:#0b1220;         /* gelap elegan */
+      --card:#111a2e;
+      --muted:#7b88a8;
+      --text:#e8edf7;
+      --accent:#7dd3fc;     /* biru muda */
+      --accent-2:#34d399;   /* hijau */
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --shadow:0 10px 24px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(125,211,252,.12), transparent 60%),
+                  radial-gradient(1200px 700px at 110% 10%, rgba(52,211,153,.12), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+    header{
+      max-width:1100px; margin:32px auto 8px; padding:0 16px;
+    }
+    .title{font-size:clamp(24px,4vw,40px); font-weight:800; letter-spacing:.2px}
+    .subtitle{color:var(--muted); margin-top:6px}
+
+    .container{max-width:1100px; margin:24px auto 56px; padding:0 16px;
+      display:grid; gap:18px; grid-template-columns: 1fr;}
+    @media(min-width:960px){
+      .container{grid-template-columns: 1.2fr 1fr}
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .card h2{margin:0 0 12px; font-size:20px}
+    .grid{display:grid; gap:12px}
+    .grid-2{grid-template-columns:1fr 1fr}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    @media(max-width:640px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+    label{font-size:13px; color:var(--muted)}
+    input, select{width:100%; padding:12px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.08);
+      background:#0e1628; color:var(--text); outline:none; transition:.2s border}
+    input:focus, select:focus{border-color:var(--accent)}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.08);
+      cursor:pointer; background:#0e1628; color:var(--text); transition:.2s transform, .2s background, .2s border;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.22)}
+    .btn.primary{background:linear-gradient(90deg, var(--accent), #60a5fa); color:#04121e}
+    .btn.success{background:linear-gradient(90deg, var(--accent-2), #22d3ee); color:#042316}
+    .btn.warn{background:linear-gradient(90deg, var(--warning), #f472b6); color:#2d1302}
+    .btn.danger{background:linear-gradient(90deg, var(--danger), #f97316); color:#2b0b0a}
+
+    .result{
+      display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+    }
+    @media(max-width:640px){.result{grid-template-columns:1fr}}
+    .pill{
+      border-radius:14px; padding:12px; border:1px dashed rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    }
+    .pill .big{font-size:22px; font-weight:800}
+
+    .kpi{
+      display:grid; gap:12px; grid-template-columns:repeat(4,1fr);
+    }
+    @media(max-width:960px){.kpi{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:520px){.kpi{grid-template-columns:1fr}}
+    .kpi .item{padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:#0e1628}
+    .kpi .item h3{margin:0 0 6px; font-size:13px; color:var(--muted)}
+    .kpi .item .val{font-weight:800; font-size:20px}
+
+    .progress{
+      height:12px; background:#0e1628; border-radius:999px; border:1px solid rgba(255,255,255,.08); overflow:hidden
+    }
+    .progress>div{height:100%; background:linear-gradient(90deg, var(--accent), #60a5fa)}
+
+    .tip{font-size:13px; color:var(--muted)}
+    footer{max-width:1100px; margin:16px auto 60px; padding:0 16px; color:var(--muted); font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">Kalkulator & Tracker Bulking</div>
+    <div class="subtitle">Hitung kebutuhan kalori, protein, dan makro lain untuk masa otot — lalu catat progres konsumsi harianmu.</div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>1) Data Diri</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Berat badan (kg)</label>
+          <input id="bb" type="number" min="25" max="250" step="0.1" value="44" />
+        </div>
+        <div>
+          <label>Tinggi badan (cm)</label>
+          <input id="tb" type="number" min="120" max="230" step="0.5" value="165" />
+        </div>
+        <div>
+          <label>Usia (tahun)</label>
+          <input id="usia" type="number" min="12" max="90" value="20" />
+        </div>
+        <div>
+          <label>Jenis kelamin</label>
+          <select id="jk">
+            <option value="pria">Pria</option>
+            <option value="wanita">Wanita</option>
+          </select>
+        </div>
+        <div>
+          <label>Aktivitas</label>
+          <select id="aktiv">
+            <option value="1.2">Sangat rendah (jarang olahraga)</option>
+            <option value="1.375">Ringan (1–3x/minggu)</option>
+            <option value="1.55" selected>Sedang (3–5x/minggu)</option>
+            <option value="1.725">Berat (6–7x/minggu)</option>
+            <option value="1.9">Sangat berat (pekerjaan fisik/atlet)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn primary" id="hitung">Hitung Kebutuhan</button>
+        <button class="btn" id="isiContoh">Isi Contoh</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2) Preferensi Target</h2>
+      <div class="grid grid-3">
+        <div>
+          <label>Surplus kalori</label>
+          <select id="surplus">
+            <option value="0.05">+5% (slow & lean)</option>
+            <option value="0.10" selected>+10% (seimbang)</option>
+            <option value="0.15">+15% (agresif)</option>
+          </select>
+        </div>
+        <div>
+          <label>Protein (g/kg BB)</label>
+          <input id="protPerKg" type="number" min="1.2" max="2.6" step="0.1" value="2.0" />
+        </div>
+        <div>
+          <label>Lemak (% dari kalori)</label>
+          <input id="fatPct" type="number" min="15" max="35" step="1" value="25" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) Hasil Perhitungan</h2>
+      <div class="result" id="hasil">
+        <div class="pill">
+          <div>Kalori harian untuk bulking</div>
+          <div class="big" id="kaloriBulking">0 kkal</div>
+        </div>
+        <div class="pill">
+          <div>Perkiraan TDEE (pemeliharaan)</div>
+          <div class="big" id="tdee">0 kkal</div>
+        </div>
+      </div>
+      <div class="kpi" style="margin-top:12px">
+        <div class="item">
+          <h3>Protein target</h3>
+          <div class="val" id="pTarget">0 g</div>
+          <div class="tip">≈ <span id="pKal">0</span> kkal</div>
+        </div>
+        <div class="item">
+          <h3>Lemak target</h3>
+          <div class="val" id="fTarget">0 g</div>
+          <div class="tip">≈ <span id="fKal">0</span> kkal</div>
+        </div>
+        <div class="item">
+          <h3>Karbohidrat target</h3>
+          <div class="val" id="cTarget">0 g</div>
+          <div class="tip">≈ <span id="cKal">0</span> kkal</div>
+        </div>
+        <div class="item">
+          <h3>Rasio Makro</h3>
+          <div class="val" id="rasioMakro">—</div>
+          <div class="tip">P : L : K</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4) Progress Harian</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Protein yang sudah dikonsumsi (g)</label>
+          <input id="pNow" type="number" min="0" step="1" value="0" />
+        </div>
+        <div>
+          <label>Kalori yang sudah dikonsumsi (kkal)</label>
+          <input id="kNow" type="number" min="0" step="1" value="0" />
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn success" id="simpan">Simpan Progress</button>
+        <button class="btn warn" id="resetHari">Reset Hari Ini</button>
+      </div>
+      <div style="margin-top:16px" class="grid">
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--muted)">
+            <span>Protein</span> <span><span id="pPct">0</span>%</span>
+          </div>
+          <div class="progress"><div id="pBar" style="width:0%"></div></div>
+          <div class="tip" style="margin-top:6px">Sisa: <span id="pSisa">0</span> g</div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--muted)">
+            <span>Kalori</span> <span><span id="kPct">0</span>%</span>
+          </div>
+          <div class="progress"><div id="kBar" style="width:0%"></div></div>
+          <div class="tip" style="margin-top:6px">Sisa: <span id="kSisa">0</span> kkal</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Tips Singkat</h2>
+      <ul class="tip">
+        <li>Rekomendasi protein umum untuk bulking: 1.6–2.2 g/kg BB. Mulai di 2.0 g/kg, evaluasi 2–4 minggu.</li>
+        <li>Surplus 5–10% cenderung lebih lean (minim lemak) namun lambat. 15% lebih cepat, risiko lemak naik.</li>
+        <li>Prioritaskan protein harian, tidur cukup, progresif overload pada latihan.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Dibuat untuk kebutuhan edukasi & tracking pribadi. Rumus TDEE menggunakan Mifflin–St Jeor + faktor aktivitas.
+  </footer>
+
+  <script>
+    // Utilitas kecil
+    const $ = (id)=>document.getElementById(id);
+    const fmt = (n)=> Number.isFinite(n)? n.toLocaleString('id-ID') : '0';
+
+    // ——— Perhitungan Energi & Makro ———
+    function hitungTDEE({bb, tb, usia, jk, aktiv}){
+      // Mifflin–St Jeor
+      const s = jk === 'pria' ? 5 : -161;
+      const bmr = (10*bb) + (6.25*tb) - (5*usia) + s;
+      return bmr * aktiv;
+    }
+    function clamp(n, min, max){ return Math.min(Math.max(n, min), max); }
+
+    function kalkulasi(){
+      const bb = parseFloat($("bb").value) || 0;
+      const tb = parseFloat($("tb").value) || 0;
+      const usia = parseFloat($("usia").value) || 0;
+      const jk = $("jk").value;
+      const aktiv = parseFloat($("aktiv").value);
+
+      // Validasi ringan
+      if(bb<=0 || tb<=0 || usia<=0){ alert('Mohon isi data diri dengan benar.'); return null; }
+
+      const tdee = hitungTDEE({bb, tb, usia, jk, aktiv});
+      const surplus = parseFloat($("surplus").value);
+      const kalBulking = tdee * (1 + surplus);
+
+      // Makro
+      const protPerKg = clamp(parseFloat($("protPerKg").value)||2.0, 1.2, 2.6);
+      const pTarget = protPerKg * bb; // gram
+      const pKal = pTarget * 4;
+
+      const fatPct = clamp(parseFloat($("fatPct").value)||25, 15, 35) / 100; // dari kalori
+      const fKal = kalBulking * fatPct; // kalori dari lemak
+      const fTarget = fKal / 9; // gram
+
+      const cKal = Math.max(kalBulking - (pKal + fKal), 0);
+      const cTarget = cKal / 4; // gram
+
+      return { tdee, kalBulking, pTarget, pKal, fTarget, fKal, cTarget, cKal };
+    }
+
+    function tampilkanHasil(r){
+      if(!r) return;
+      $("tdee").textContent = fmt(Math.round(r.tdee)) + ' kkal';
+      $("kaloriBulking").textContent = fmt(Math.round(r.kalBulking)) + ' kkal';
+
+      $("pTarget").textContent = fmt(Math.round(r.pTarget)) + ' g';
+      $("pKal").textContent = fmt(Math.round(r.pKal));
+
+      $("fTarget").textContent = fmt(Math.round(r.fTarget)) + ' g';
+      $("fKal").textContent = fmt(Math.round(r.fKal));
+
+      $("cTarget").textContent = fmt(Math.round(r.cTarget)) + ' g';
+      $("cKal").textContent = fmt(Math.round(r.cKal));
+
+      const totalKal = r.pKal + r.fKal + r.cKal;
+      const rp = totalKal? Math.round((r.pKal/totalKal)*100):0;
+      const rf = totalKal? Math.round((r.fKal/totalKal)*100):0;
+      const rc = Math.max(0, 100 - rp - rf);
+      $("rasioMakro").textContent = `${rp}:${rf}:${rc}`;
+
+      // Update batang progres terhadap target baru
+      updateProgressBars();
+      simpanTargetKeLocal(r);
+    }
+
+    // ——— Progress Harian (localStorage) ———
+    function keyHari(){
+      const d = new Date();
+      // kunci per-hari lokal: YYYY-MM-DD
+      return d.toISOString().slice(0,10);
+    }
+    function simpanTargetKeLocal(r){
+      const t = { pTarget: r.pTarget, kTarget: r.kalBulking };
+      localStorage.setItem('bulking_target', JSON.stringify(t));
+    }
+    function ambilTarget(){
+      try{ return JSON.parse(localStorage.getItem('bulking_target')) || null }catch{ return null }
+    }
+
+    function simpanProgress(){
+      const p = parseFloat($("pNow").value)||0;
+      const k = parseFloat($("kNow").value)||0;
+      const data = { p, k, date:keyHari() };
+      localStorage.setItem('bulking_progress_'+keyHari(), JSON.stringify(data));
+      updateProgressBars();
+    }
+    function ambilProgress(){
+      try{ return JSON.parse(localStorage.getItem('bulking_progress_'+keyHari())) || {p:0,k:0,date:keyHari()} }catch{ return {p:0,k:0,date:keyHari()} }
+    }
+    function resetHariIni(){
+      localStorage.removeItem('bulking_progress_'+keyHari());
+      $("pNow").value = 0;
+      $("kNow").value = 0;
+      updateProgressBars();
+    }
+
+    function updateProgressBars(){
+      const target = ambilTarget();
+      const prog = ambilProgress();
+      const pT = target?.pTarget || 0; // gram
+      const kT = target?.kTarget || 0; // kkal
+
+      // set input agar sinkron kalau ada simpanan
+      if(Number($("pNow").value) !== prog.p) $("pNow").value = prog.p;
+      if(Number($("kNow").value) !== prog.k) $("kNow").value = prog.k;
+
+      const pPct = pT? Math.min(Math.round((prog.p/pT)*100), 100):0;
+      const kPct = kT? Math.min(Math.round((prog.k/kT)*100), 100):0;
+      $("pPct").textContent = pPct;
+      $("kPct").textContent = kPct;
+      $("pBar").style.width = pPct + '%';
+      $("kBar").style.width = kPct + '%';
+
+      const pSisa = Math.max(Math.round(pT - prog.p), 0);
+      const kSisa = Math.max(Math.round(kT - prog.k), 0);
+      $("pSisa").textContent = fmt(pSisa);
+      $("kSisa").textContent = fmt(kSisa);
+    }
+
+    // ——— Interaksi ———
+    $("hitung").addEventListener('click', ()=>{
+      const r = kalkulasi();
+      tampilkanHasil(r);
+    });
+    $("isiContoh").addEventListener('click', ()=>{
+      $("bb").value = 60; $("tb").value = 170; $("usia").value = 22; $("jk").value='pria'; $("aktiv").value='1.55';
+      $("protPerKg").value=2.0; $("fatPct").value=25; $("surplus").value='0.10';
+      const r = kalkulasi(); tampilkanHasil(r);
+    });
+
+    $("simpan").addEventListener('click', ()=>{ simpanProgress(); });
+    $("resetHari").addEventListener('click', ()=>{ resetHariIni(); });
+
+    // Hitung pertama kali dengan nilai default
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const r = kalkulasi(); tampilkanHasil(r); updateProgressBars();
+    });
+  </script>
+</body>
+</html>
